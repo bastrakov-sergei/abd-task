@@ -1,0 +1,10 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<h1>Start page</h1>
+@if (User.IsInRole(Roles.Administrator))
+{
+    <a asp-controller="AccountsManage" asp-action="Index" class="btn btn-link">Account management</a>
+    <a asp-controller="TradePointsManage" asp-action="Index" class="btn btn-link">Trade points management</a>
+}
+<a asp-controller="TradePoints" asp-action="Index" class="btn btn-link">Trade points view</a>

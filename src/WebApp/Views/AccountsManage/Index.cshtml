@@ -1,0 +1,21 @@
+﻿@model ApplicationUser[]
+@inject UserManager<ApplicationUser> UserManager
+
+<h2>User list</h2>
+
+<table class="table">
+    @foreach (var user in Model)
+    {
+        <tr>
+            <td>@user.UserName</td>
+            <td>
+                <a asp-action="Edit" asp-route-userId="@user.Id" class="btn btn-default">Edit</a>
+                @if ((await UserManager.GetUserAsync(User).ConfigureAwait(false)).Id != user.Id)
+                {
+                    <a asp-action="Delete" asp-route-userId="@user.Id" class="btn btn-danger">Delete</a>
+                }
+            </td>
+        </tr>
+    }
+</table>
+<a asp-action="Add" class="btn btn-default">Add</a>

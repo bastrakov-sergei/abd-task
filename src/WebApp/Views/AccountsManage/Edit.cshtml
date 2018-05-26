@@ -1,0 +1,27 @@
+﻿@model WebApp.ViewModels.AccountsManage.EditUserViewModel
+@{
+    ViewBag.Title = "Edit user";
+}
+<br />
+<form asp-action="Edit" asp-controller="AccountsManage">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <label asp-for="Login" class="control-label">Login</label>
+        <input type="text" asp-for="Login" class="form-control" />
+        <span asp-validation-for="Login" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Password" class="control-label">Пароль</label>
+        <input type="password" asp-for="Password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Role" class="control-label">Роль</label>
+        <select asp-for="Role" asp-items="@(new SelectList(Roles.AsArray))"></select>
+        <span asp-validation-for="Role" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-success" />
+        <a asp-action="Index" class="btn btn-default">Return back</a>
+    </div>
+</form>

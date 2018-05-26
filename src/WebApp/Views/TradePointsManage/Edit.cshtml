@@ -1,0 +1,69 @@
+﻿@using System.Globalization
+@using WebApp.Models.TradePoints
+@model WebApp.ViewModels.TradePointsManage.EditTradePointViewModel
+@{
+    ViewBag.Title = "Edit trade point";
+}
+<br/>
+<form asp-action="Edit" asp-controller="TradePointsManage" method="post">
+    <div class="form-group">
+        <label asp-for="Name" class="control-label">Name</label>
+        <input type="text" asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="TypeId" class="control-label">Type</label>
+        <select asp-for="TypeId" asp-items="@(new SelectList(ViewBag.Types, nameof(TradePointType.Id), nameof(TradePointType.Name)))"></select>
+    </div>
+    <div id="dvMap" style="width: 500px; height: 500px"></div>
+    <span asp-validation-for="Latitude" class="text-danger"></span>
+    <span asp-validation-for="Longitude" class="text-danger"></span>
+
+    <div class="form-group">
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="Latitude" id="Latitude" />
+        <input type="hidden" asp-for="Longitude" id="Longitude" />
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Edit" class="btn btn-success" />
+        <a asp-action="Index" class="btn btn-default">Return back</a>
+    </div>
+</form>
+
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB--hVq-RR92QOqfo9BF81ciO5-QNgQalQ"></script>
+<script type="text/javascript">
+    window.onload = function() {
+        var lat = document.getElementById('Latitude');
+        var lng = document.getElementById('Longitude');
+
+        var mapOptions = {
+            center: new window.google.maps.LatLng(
+                @Model.Latitude.ToString(CultureInfo.InvariantCulture),
+                @Model.Longitude.ToString(CultureInfo.InvariantCulture)),
+            zoom: 8,
+            mapTypeId: window.google.maps.MapTypeId.ROADMAP
+        };
+        window.map = new window.google.maps.Map(document.getElementById("dvMap"), mapOptions);
+
+        window.map.addListener('click',
+            function(e) {
+                placeMarker(e.latLng, map);
+            });
+
+        function placeMarker(position, map) {
+            if (window.marker)
+                window.marker.setMap(null);
+
+            window.marker = new window.google.maps.Marker({
+                position: position,
+                map: map
+            });
+            map.panTo(position);
+            lat.value = window.marker.position.lat();
+            lng.value = window.marker.position.lng();
+        }
+
+        placeMarker(mapOptions.center, window.map);
+    }
+</script>

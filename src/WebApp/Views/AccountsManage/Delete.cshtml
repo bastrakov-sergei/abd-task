@@ -1,0 +1,29 @@
+﻿@model ApplicationUser
+
+@{
+    ViewBag.Title = "Delete user";
+}
+
+<h2>Delete user</h2>
+<h3>Are you sure you want to delete user?</h3>
+<br/>
+<div>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.UserName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.UserName)
+        </dd>
+    </dl>
+    <form asp-controller="AccountsManage" asp-action="Delete" asp-route-userId="@Model.Id">
+        <input type="submit" value="Delete" class="btn btn-danger" />
+        <a asp-action="Index" class="btn btn-default">Return back</a>
+    </form>
+</div>

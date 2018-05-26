@@ -1,0 +1,71 @@
+﻿@using WebApp.Controllers.TradePointsManage
+@using WebApp.Views
+@using X.PagedList.Mvc.Core
+@model IndexViewModel
+@{
+    ViewBag.Title = "Trade points view";
+}
+<h2>Trade points</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Type</th>
+        </tr>
+    </thead>
+    @foreach (var tp in Model.TradePoints)
+    {
+        <tr>
+            <td>@tp.Id</td>
+            <td>@tp.Name</td>
+            <td>@tp.Type.Name</td>
+            <td>
+                <a asp-action="Edit" asp-route-tradePointId="@tp.Id" class="btn btn-default">Edit</a>
+                <a asp-action="Delete" asp-route-tradePointId="@tp.Id" class="btn btn-danger">Delete</a>
+            </td>
+        </tr>
+    }
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>
+            <a asp-action="Add" class="btn btn-default">Add trade point</a>
+        </td>
+    </tr>
+</table>
+@Html.PagedListPager(Model.TradePoints, page => Url.Action("Index", new { page }))
+<br />
+<h2>Unprocessed data files</h2>
+<a href="~/jobs" class="btn btn-info">Hangfire jobs</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Hash</th>
+            <th>ProcessingError</th>
+        </tr>
+    </thead>
+    @foreach (var df in Model.DataFiles)
+    {
+        <tr>
+            <td>@df.Id</td>
+            <td>@df.Name</td>
+            <td>@Html.Print(df.Hash)</td>
+            @if (df.ProcessingError != null)
+            {
+                <td>@df.ProcessingError</td>
+            }
+        </tr>
+    }
+</table>
+
+<form asp-action="Upload" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <input type="file" name="uploadedFile" class="btn btn-default" /><br>
+        <input type="submit" value="Upload" class="btn btn-success" />
+    </div>
+</form>

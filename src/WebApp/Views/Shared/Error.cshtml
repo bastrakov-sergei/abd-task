@@ -1,0 +1,20 @@
+﻿@using WebApp.ViewModels
+@model ErrorViewModel
+@{
+    ViewBag.Title = "Error";
+}
+
+<h1 class="text-danger">Error.</h1>
+<h2 class="text-danger">An error occurred while processing your request.</h2>
+
+@if (Model.ShowRequestId)
+{
+    <p>
+        <strong>Request ID:</strong> <code>@Model.RequestId</code>
+    </p>
+}
+
+@foreach (var error in @Model.Errors)
+{
+    <h4 class="text-danger">@error.Code, @error.Description</h4>
+}

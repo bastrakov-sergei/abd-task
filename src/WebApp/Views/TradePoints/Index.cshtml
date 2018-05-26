@@ -1,0 +1,126 @@
+﻿
+@{
+    ViewBag.Title = "Trade points view";
+}
+
+<h2>Trade points view</h2>
+<div id="dvMap" style="width: 900px; height: 900px"></div>
+<table id="tradePoints" class="table">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Type</th>
+    </tr>
+    </thead>
+    <tr></tr>
+    <tbody>
+    </tbody>
+</table>
+
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB--hVq-RR92QOqfo9BF81ciO5-QNgQalQ"></script>
+<script type="text/javascript">
+    window.onload = function() {
+        window.markers = [];
+        var createMarkers = (tradePoints) => {
+            return tradePoints.map((v) => {
+                    var marker = new window.google.maps.Marker({
+                        position: new window.google.maps.LatLng(v.location.latitude, v.location.longitude),
+                        map: map,
+                        title: v.Name
+                    });
+                    var infowindow = new window.google.maps.InfoWindow({
+                        content: `<h1>${v.name}</h1>` +
+                            `<table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Name</th>
+                                        <th>Type</th>
+                                    </tr>
+                                </thead>
+                                <tr>
+                                    <td>${v.id}</td>
+                                    <td>${v.name}</td>
+                                    <td>${v.type.name}</td>
+                                </tr>
+                            </table>`
+                    });
+                    marker.addListener('click',
+                        function() {
+                            infowindow.open(map, marker);
+                        });
+                    return marker;
+                }
+            );
+        }
+        var getNearest = (latLng, radius) => {
+            return new Promise((fullfill, reject) => {
+                $.ajax({
+                    type: "get",
+                    url: '@Url.Action("GetNearestTradePoints")',
+                    data: {
+                        latitude: latLng.lat(),
+                        longitude: latLng.lng(),
+                        radius: radius
+                    },
+                    success: fullfill,
+                    error: reject,
+                    dataType: 'json'
+                });
+            });
+        };
+
+        var setMapOnAll = (map) => {
+            for (var i = 0; i < markers.length; i++) {
+                markers[i].setMap(map);
+            }
+        }
+
+        var getDistance = (latLngBounds) => {
+            var ne = latLngBounds.getNorthEast();
+            var sw = latLngBounds.getSouthWest();
+
+            var r = 6371000;
+            var φ1 = ne.lat() * (Math.PI / 180);
+            var φ2 = sw.lat() * (Math.PI / 180);
+            var δφ = (sw.lat() - ne.lat()) * (Math.PI / 180);
+            var δλ = (sw.lng() - ne.lng()) * (Math.PI / 180);
+
+            var a = Math.sin(δφ / 2) * Math.sin(δφ / 2) +
+                Math.cos(φ1) *
+                Math.cos(φ2) *
+                Math.sin(δλ / 2) *
+                Math.sin(δλ / 2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+            var d = r * c;
+            return d;
+        };
+
+        var mapOptions = {
+            center: new window.google.maps.LatLng(55.833812, 49.072571),
+            zoom: 8,
+            mapTypeId: window.google.maps.MapTypeId.ROADMAP
+        };
+        window.map = new window.google.maps.Map(document.getElementById('dvMap'), mapOptions);
+        window.map.addListener('idle',
+            () => {
+                var bounds = map.getBounds();
+                var result = getNearest(bounds.getCenter(), getDistance(bounds) / 2);
+                result.then((nearest) => {
+                    setMapOnAll(null);
+                    window.markers = createMarkers(nearest);
+                    $('#tradePoints > tbody').empty();
+                    $.each(nearest,
+                        (i, tp) => {
+                            $('#tradePoints > tbody').append(`<tr>
+                                                                        <td>${tp.id}</td>
+                                                                        <td>${tp.name}</td>
+                                                                        <td>${tp.type.name}</td>
+                                                                    </tr>`);
+                        });
+                });
+            });
+    }
+</script>

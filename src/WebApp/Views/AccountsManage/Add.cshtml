@@ -1,0 +1,26 @@
+﻿@model WebApp.ViewModels.AccountsManage.AddUserViewModel
+@{
+    ViewBag.Title = "Add user";
+}
+<br/>
+<form asp-action="Add" asp-controller="AccountsManage" method="post">
+    <div class="form-group">
+        <label asp-for="Login" class="control-label">Login</label>
+        <input type="text" asp-for="Login" class="form-control" />
+        <span asp-validation-for="Login" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Password" class="control-label">Пароль</label>
+        <input type="password" asp-for="Password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Role" class="control-label">Роль</label>
+        <select asp-for="Role" asp-items="@(new SelectList(Roles.AsArray))"></select>
+        <span asp-validation-for="Role" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Add" class="btn btn-success" />
+        <a asp-action="Index" class="btn btn-default">Return back</a>
+    </div>
+</form>

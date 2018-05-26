@@ -1,0 +1,62 @@
+﻿@using System.Globalization
+@model WebApp.Models.TradePoints.TradePoint
+
+@{
+    ViewBag.Title = "Delete trade point";
+}
+
+<h2>Delete trade point</h2>
+<h3>Are you sure you want to delete trade point?</h3>
+<br />
+<div>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Type)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Type.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(tp => tp.Location)
+        </dt>
+        <dd>
+            <div id="dvMap" style="width: 500px; height: 500px"></div>
+        </dd>
+    </dl>
+    <form asp-controller="TradePointsManage" asp-action="Delete" asp-route-tradePointId="@Model.Id">
+        <input type="submit" value="Delete" class="btn btn-danger" />
+        <a asp-action="Index" class="btn btn-default">Return back</a>
+    </form>
+</div>
+
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB--hVq-RR92QOqfo9BF81ciO5-QNgQalQ"></script>
+<script type="text/javascript">
+    window.onload = function() {
+        var mapOptions = {
+            center: new window.google.maps.LatLng(
+                @Model.Location.Latitude.ToString(CultureInfo.InvariantCulture),
+                @Model.Location.Longitude.ToString(CultureInfo.InvariantCulture)),
+            zoom: 8,
+            mapTypeId: window.google.maps.MapTypeId.ROADMAP
+        };
+        window.map = new window.google.maps.Map(document.getElementById("dvMap"), mapOptions);
+
+        window.marker = new window.google.maps.Marker({
+            position: mapOptions.center,
+            map: window.map
+        });
+        map.panTo(window.marker.position);
+    }
+</script>
